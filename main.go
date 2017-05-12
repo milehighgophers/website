@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"sync"
 )
 
 const (
@@ -46,7 +47,9 @@ type eventData struct {
 
 func main() {
 	http.HandleFunc("/", indexHandler)
-	log.Fatal(http.ListenAndServe("localhost:8080", nil))
+	addr := "localhost:8080"
+	log.Printf("listening on %s", addr)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
 func indexHandler(rw http.ResponseWriter, r *http.Request) {
@@ -65,19 +68,33 @@ func render(events []eventData) []byte {
 
 func allEvents() []eventData {
 	// TODO: consider sorting by timestamp
-	// TODO: refactor as range over slice
-	boulder := events(meetupNames[0])
-	denver := events(meetupNames[1])
-	dtc := events(meetupNames[2])
 
-	var allEvents []eventData
-	allEvents = append(allEvents, boulder...)
-	allEvents = append(allEvents, denver...)
-	allEvents = append(allEvents, dtc...)
-	return allEvents
+	eventCh := make(chan []eventData)
+	done := make(chan struct{})
+	var all []eventData
+
+	go func() {
+		for eds := range eventCh {
+			all = append(all, eds...)
+		}
+		close(done)
+	}()
+
+	var wg sync.WaitGroup
+	for _, meetup := range meetupNames {
+		wg.Add(1)
+		go events(meetup, eventCh, &wg)
+	}
+	wg.Wait()
+	close(eventCh)
+
+	<-done
+	return all
 }
 
-func events(name string) []eventData {
+func events(name string, out chan []eventData, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	resp, err := http.Get(fmt.Sprintf(apiTemplate, name))
 	if err != nil {
 		log.Fatal(err)
@@ -90,5 +107,5 @@ func events(name string) []eventData {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return data
+	out <- data
 }
