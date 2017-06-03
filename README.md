@@ -11,7 +11,3 @@ recorded as part of the [Go Build It](#) series.
 - [Mile High Gopher's Website - Building a Cache](#)
 
 ## TODO
-
-- Poll for meetup data and store in memory.
-- Order event data by timestamp.
-- Clean up presentation (show design psd).

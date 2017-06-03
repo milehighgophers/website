@@ -8,21 +8,25 @@ import (
 	"github.com/milehighgophers/website/ui"
 )
 
-func Start(addr string) error {
+type Store interface {
+	AllEvents() []data.Event
+}
+
+func Start(addr string, s Store) error {
 	log.Printf("listening on %s", addr)
 
 	mux := http.NewServeMux()
-	mux.Handle("/", NewIndexHandler())
+	mux.Handle("/", NewIndexHandler(s))
 	return http.ListenAndServe(addr, mux)
 }
 
 type IndexHandler struct {
-	store *data.Store
+	store Store
 }
 
-func NewIndexHandler() *IndexHandler {
+func NewIndexHandler(s Store) *IndexHandler {
 	return &IndexHandler{
-		store: &data.Store{},
+		store: s,
 	}
 }
 

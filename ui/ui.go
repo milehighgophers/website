@@ -17,7 +17,7 @@ const (
 	</head>
 	<body>
 		{{range .}}
-			<div>{{.Name}} -- {{.Time}}</div>
+			<div>{{.Name}} -- {{.HumanTime}}</div>
 		{{else}}
 			<div><strong>No Events</strong></div>
 		{{end}}
