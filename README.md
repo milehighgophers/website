@@ -6,11 +6,12 @@ recorded as part of the [Go Build It](#) series.
  
 ## Go Build It Episodes
 
- - [Getting Started](#)
- - [Concurrent Polling](#)
+- [Mile High Gopher's Website - Getting Started](#)
+- [Mile High Gopher's Website - Concurrent Polling](#)
+- [Mile High Gopher's Website - Building a Cache](#)
 
 ## TODO
 
- - Use concurrency to speed up request time.
- - Poll for meetup data and store in memory.
- - Split up concerns into packages.
+- Poll for meetup data and store in memory.
+- Order event data by timestamp.
+- Clean up presentation (show design psd).
