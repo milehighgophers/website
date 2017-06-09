@@ -14,20 +14,28 @@ const (
 	<head>
 		<meta charset="UTF-8">
 		<title>Mile High Gopher Events</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css">
 		<link rel="stylesheet" href="/assets/styles.css">
 	</head>
 	<body>
-	<img src="/assets/logo.png">
-	{{range $key, $value := .UpcomingEvents}}
-		<h1>{{$key}}</h1>
-		<ul>
-		{{range $value}}
-			<li>{{.HumanTime}} -- {{.Name}}</li>
-		{{else}}
-			<div><strong>No Events</strong></div>
-		{{end}}
-		</ul>
-	{{end}}
+		<header class="header">
+			<img src="/assets/logo.png" alt="mile-high-gophers-logo" class="logo">
+			<img src="/assets/hero.jpg" alt="mountains-backdrop">
+		</header>
+		<section class="body flex-container">
+			{{range $key, $value := .UpcomingEvents}}
+				<div class="flex-1">
+					<h1>{{$key}}</h1>
+					<ul>
+					{{range $value}}
+						<li>{{.HumanTime}} -- {{.Name}}</li>
+					{{else}}
+						<div><strong>No Events</strong></div>
+					{{end}}
+					</ul>
+				</div>
+			{{end}}
+		</section>
 	</body>
 </html>
 `

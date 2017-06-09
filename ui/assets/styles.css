@@ -1,3 +1,15 @@
 body {
-    background: pink;
+    font-family: monospace;
+    width: 1024px;
+    margin: 0 auto;
 }
+
+.logo {
+    width: 200px;
+    position: absolute;
+    margin-left: 412px;
+    margin-top: 10px;
+}
+
+.flex-container { display: flex; }
+.flex-1 { flex: 1; }

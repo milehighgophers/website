@@ -19,6 +19,8 @@ func (*AssetHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		sendAsset("styles.css", "text/css", rw)
 	case "/assets/logo.png":
 		sendAsset("logo.png", "image/png", rw)
+	case "/assets/hero.jpg":
+		sendAsset("hero.jpg", "image/jpeg", rw)
 	default:
 		log.Printf("404 not found: %s", r.URL.Path)
 		rw.WriteHeader(http.StatusNotFound)
