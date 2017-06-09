@@ -1,0 +1,14 @@
+{{define "events"}}
+<ul>
+{{range .}}
+<li>
+    <dl>
+        <dt>{{.HumanTime}}</dt>
+        <dd>{{.Name}}</dd>
+    </dl>
+</li>
+{{else}}
+<div><strong>No Events</strong></div>
+{{end}}
+</ul>
+{{end}}

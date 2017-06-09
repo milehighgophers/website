@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Mile High Gopher Events</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css">
+		<link rel="stylesheet" href="/assets/styles.css">
+	</head>
+	<body>
+		<header class="header">
+			<img src="/assets/logo.png" alt="mile-high-gophers-logo" class="logo">
+			<img src="/assets/hero.jpg" alt="mountains-backdrop">
+		</header>
+		<section class="body flex-container">
+			<div class="flex-1">
+				<h1>Boulder</h1>
+                {{template "events" .BoulderEvents}}
+			</div>
+			<div class="flex-1">
+				<h1>Denver</h1>
+                {{template "events" .DenverEvents}}
+			</div>
+			<div class="flex-1">
+				<h1>Denver Tech Center</h1>
+                {{template "events" .DTCEvents}}
+			</div>
+		</section>
+	</body>
+</html>
