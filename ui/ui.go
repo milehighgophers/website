@@ -16,11 +16,16 @@ const (
 		<title>Mile High Gopher Events</title>
 	</head>
 	<body>
-		{{range .}}
-			<div>{{.Name}} -- {{.HumanTime}}</div>
+	{{range $key, $value := .}}
+		<h1>{{$key}}</h1>
+		<ul>
+		{{range $value}}
+			<li>{{.HumanTime}} -- {{.Name}}</li>
 		{{else}}
 			<div><strong>No Events</strong></div>
 		{{end}}
+		</ul>
+	{{end}}
 	</body>
 </html>
 `
@@ -29,7 +34,7 @@ const (
 var indexTemplate = template.Must(template.New("index").Parse(indexTemplateStr))
 
 // Render will turn meetup event data into something to write out.
-func Render(events []data.Event) []byte {
+func Render(events map[string][]data.Event) []byte {
 	buf := &bytes.Buffer{}
 	indexTemplate.Execute(buf, events)
 	return buf.Bytes()

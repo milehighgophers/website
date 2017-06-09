@@ -9,7 +9,7 @@ import (
 )
 
 type Store interface {
-	AllEvents() []data.Event
+	AllEvents() map[string][]data.Event
 }
 
 func Start(addr string, s Store) error {

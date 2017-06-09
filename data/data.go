@@ -25,7 +25,7 @@ type Store struct {
 	pollingInterval time.Duration
 
 	mu         sync.Mutex
-	eventCache []Event
+	eventCache map[string][]Event
 }
 
 // NewStore creates a new store initialized with a polling interval.
@@ -45,42 +45,34 @@ func (s *Store) Poll() {
 	}
 }
 
-func (s *Store) updateCache(events []Event) {
+func (s *Store) updateCache(events map[string][]Event) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.eventCache = events
 }
 
-func (s *Store) poll() []Event {
-	eventCh := make(chan []Event)
-	done := make(chan struct{})
-	var all []Event
-
-	go func() {
-		for eds := range eventCh {
-			all = append(all, eds...)
-		}
-		close(done)
-	}()
-
-	var wg sync.WaitGroup
+func (s *Store) poll() map[string][]Event {
+	all := make(map[string][]Event)
 	for _, meetup := range meetupNames {
-		wg.Add(1)
-		go events(meetup, eventCh, &wg)
+		eds, err := events(meetup)
+		if err != nil {
+			log.Printf("error fetching events for %s: %s", meetup, err)
+			continue
+		}
+		all[meetup] = eds
 	}
-	wg.Wait()
-	close(eventCh)
 
-	<-done
+	for _, v := range all {
+		sort.Slice(v, func(i, j int) bool {
+			return v[i].Time < v[j].Time
+		})
+	}
 
-	sort.Slice(all, func(i, j int) bool {
-		return all[i].Time < all[j].Time
-	})
 	return all
 }
 
 // AllEvents returns the current meetup events in CO.
-func (s *Store) AllEvents() []Event {
+func (s *Store) AllEvents() map[string][]Event {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.eventCache
@@ -95,12 +87,10 @@ type Event struct {
 
 // HumanTime returns the time formated for the UI.
 func (e Event) HumanTime() string {
-	return time.Unix(e.Time/1000, 0).Format(time.UnixDate)
+	return time.Unix(e.Time/1000, 0).Format(time.RFC1123)
 }
 
-func events(name string, out chan []Event, wg *sync.WaitGroup) {
-	defer wg.Done()
-
+func events(name string) ([]Event, error) {
 	resp, err := http.Get(fmt.Sprintf(apiTemplate, name))
 	if err != nil {
 		log.Fatal(err)
@@ -111,7 +101,7 @@ func events(name string, out chan []Event, wg *sync.WaitGroup) {
 	var data []Event
 	err = decoder.Decode(&data)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
-	out <- data
+	return data, nil
 }
