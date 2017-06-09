@@ -35,7 +35,11 @@ var indexTemplate = template.Must(template.New("index").Parse(indexTemplateStr))
 
 // Render will turn meetup event data into something to write out.
 func Render(events map[string][]data.Event) []byte {
+	threeEvents := make(map[string][]data.Event)
+	for k, v := range events {
+		threeEvents[k] = v[0:3]
+	}
 	buf := &bytes.Buffer{}
-	indexTemplate.Execute(buf, events)
+	indexTemplate.Execute(buf, threeEvents)
 	return buf.Bytes()
 }
