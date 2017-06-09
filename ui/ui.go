@@ -27,7 +27,12 @@ const (
 				<h1>Boulder</h1>
 				<ul>
 				{{range .BoulderEvents}}
-					<li>{{.HumanTime}} -- {{.Name}}</li>
+					<li>
+						<dl>
+							<dt>{{.HumanTime}}</dt>
+							<dd>{{.Name}}</dd>
+						</dl>
+					</li>
 				{{else}}
 					<div><strong>No Events</strong></div>
 				{{end}}
@@ -37,7 +42,12 @@ const (
 				<h1>Denver</h1>
 				<ul>
 				{{range .DenverEvents}}
-					<li>{{.HumanTime}} -- {{.Name}}</li>
+					<li>
+						<dl>
+							<dt>{{.HumanTime}}</dt>
+							<dd>{{.Name}}</dd>
+						</dl>
+					</li>
 				{{else}}
 					<div><strong>No Events</strong></div>
 				{{end}}
@@ -47,7 +57,12 @@ const (
 				<h1>Denver Tech Center</h1>
 				<ul>
 				{{range .DTCEvents}}
-					<li>{{.HumanTime}} -- {{.Name}}</li>
+					<li>
+						<dl>
+							<dt>{{.HumanTime}}</dt>
+							<dd>{{.Name}}</dd>
+						</dl>
+					</li>
 				{{else}}
 					<div><strong>No Events</strong></div>
 				{{end}}
