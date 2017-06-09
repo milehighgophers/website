@@ -17,6 +17,7 @@ func Start(addr string, s Store) error {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", NewIndexHandler(s))
+	mux.Handle("/assets/", ui.NewAssetHandler())
 	return http.ListenAndServe(addr, mux)
 }
 
