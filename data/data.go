@@ -24,8 +24,8 @@ var (
 type Store struct {
 	pollingInterval time.Duration
 
-	mu         sync.Mutex
-	eventCache map[string][]Event
+	mu             sync.Mutex
+	meetupSchedule *MeetupSchedule
 }
 
 // NewStore creates a new store initialized with a polling interval.
@@ -45,37 +45,33 @@ func (s *Store) Poll() {
 	}
 }
 
-func (s *Store) updateCache(events map[string][]Event) {
+func (s *Store) updateCache(schedule *MeetupSchedule) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.eventCache = events
+	s.meetupSchedule = schedule
 }
 
-func (s *Store) poll() map[string][]Event {
-	all := make(map[string][]Event)
+func (s *Store) poll() *MeetupSchedule {
+	schedule := NewMeetupSchedule()
 	for _, meetup := range meetupNames {
 		eds, err := events(meetup)
 		if err != nil {
 			log.Printf("error fetching events for %s: %s", meetup, err)
 			continue
 		}
-		all[meetup] = eds
-	}
-
-	for _, v := range all {
-		sort.Slice(v, func(i, j int) bool {
-			return v[i].Time < v[j].Time
+		sort.Slice(eds, func(i, j int) bool {
+			return eds[i].Time < eds[j].Time
 		})
+		schedule.Add(meetup, eds)
 	}
-
-	return all
+	return schedule
 }
 
 // AllEvents returns the current meetup events in CO.
-func (s *Store) AllEvents() map[string][]Event {
+func (s *Store) AllEvents() *MeetupSchedule {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.eventCache
+	return s.meetupSchedule
 }
 
 // Event contains information about a meetup event.
@@ -88,6 +84,40 @@ type Event struct {
 // HumanTime returns the time formated for the UI.
 func (e Event) HumanTime() string {
 	return time.Unix(e.Time/1000, 0).Format(time.RFC1123)
+}
+
+func NewMeetupSchedule() *MeetupSchedule {
+	return &MeetupSchedule{
+		events: make(map[string][]Event),
+	}
+}
+
+type MeetupSchedule struct {
+	events map[string][]Event
+}
+
+func (m *MeetupSchedule) Add(name string, events []Event) {
+	m.events[name] = events
+}
+
+func (m *MeetupSchedule) BoulderEvents() []Event {
+	return nextThree(m.events["Boulder-Gophers"])
+}
+
+func (m *MeetupSchedule) DenverEvents() []Event {
+	return nextThree(m.events["Denver-Go-Language-User-Group"])
+}
+
+func (m *MeetupSchedule) DTCEvents() []Event {
+	return nextThree(m.events["Denver-Go-Programming-Language-Meetup"])
+}
+
+func nextThree(events []Event) []Event {
+	if len(events) < 3 {
+		return events
+	}
+
+	return events[0:3]
 }
 
 func events(name string) ([]Event, error) {

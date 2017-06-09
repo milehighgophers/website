@@ -23,18 +23,36 @@ const (
 			<img src="/assets/hero.jpg" alt="mountains-backdrop">
 		</header>
 		<section class="body flex-container">
-			{{range $key, $value := .UpcomingEvents}}
-				<div class="flex-1">
-					<h1>{{$key}}</h1>
-					<ul>
-					{{range $value}}
-						<li>{{.HumanTime}} -- {{.Name}}</li>
-					{{else}}
-						<div><strong>No Events</strong></div>
-					{{end}}
-					</ul>
-				</div>
-			{{end}}
+			<div class="flex-1">
+				<h1>Boulder</h1>
+				<ul>
+				{{range .BoulderEvents}}
+					<li>{{.HumanTime}} -- {{.Name}}</li>
+				{{else}}
+					<div><strong>No Events</strong></div>
+				{{end}}
+				</ul>
+			</div>
+			<div class="flex-1">
+				<h1>Denver</h1>
+				<ul>
+				{{range .DenverEvents}}
+					<li>{{.HumanTime}} -- {{.Name}}</li>
+				{{else}}
+					<div><strong>No Events</strong></div>
+				{{end}}
+				</ul>
+			</div>
+			<div class="flex-1">
+				<h1>Denver Tech Center</h1>
+				<ul>
+				{{range .DTCEvents}}
+					<li>{{.HumanTime}} -- {{.Name}}</li>
+				{{else}}
+					<div><strong>No Events</strong></div>
+				{{end}}
+				</ul>
+			</div>
 		</section>
 	</body>
 </html>
@@ -44,23 +62,8 @@ const (
 var indexTemplate = template.Must(template.New("index").Parse(indexTemplateStr))
 
 // Render will turn meetup event data into something to write out.
-func Render(events map[string][]data.Event) []byte {
-	index := &indexPage{
-		events: events,
-	}
+func Render(s *data.MeetupSchedule) []byte {
 	buf := &bytes.Buffer{}
-	indexTemplate.Execute(buf, index)
+	indexTemplate.Execute(buf, s)
 	return buf.Bytes()
-}
-
-type indexPage struct {
-	events map[string][]data.Event
-}
-
-func (p *indexPage) UpcomingEvents() map[string][]data.Event {
-	threeEvents := make(map[string][]data.Event)
-	for k, v := range p.events {
-		threeEvents[k] = v[0:3]
-	}
-	return threeEvents
 }
