@@ -3,8 +3,7 @@ package ui
 import (
 	"log"
 	"net/http"
-
-	"github.com/milehighgophers/website/ui/assets"
+	"strings"
 )
 
 func NewAssetHandler() http.Handler {
@@ -14,13 +13,15 @@ func NewAssetHandler() http.Handler {
 type AssetHandler struct{}
 
 func (*AssetHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	switch r.URL.Path {
-	case "/assets/styles.css":
-		sendAsset("styles.css", "text/css", rw)
-	case "/assets/logo.png":
-		sendAsset("logo.png", "image/png", rw)
-	case "/assets/hero.jpg":
-		sendAsset("hero.jpg", "image/jpeg", rw)
+	// TODO: refactor this to pull data from assets more dynamically
+	path := strings.TrimLeft(r.URL.Path, "/")
+	switch path {
+	case "assets/styles.css":
+		sendAsset(path, "text/css", rw)
+	case "assets/logo.png":
+		sendAsset(path, "image/png", rw)
+	case "assets/hero.jpg":
+		sendAsset(path, "image/jpeg", rw)
 	default:
 		log.Printf("404 not found: %s", r.URL.Path)
 		rw.WriteHeader(http.StatusNotFound)
@@ -28,7 +29,7 @@ func (*AssetHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 }
 
 func sendAsset(name string, mimeType string, rw http.ResponseWriter) {
-	file, err := assets.Asset(name)
+	file, err := Asset(name)
 	if err != nil {
 		log.Printf("failed to find asset: %s", file)
 		rw.WriteHeader(http.StatusNotFound)

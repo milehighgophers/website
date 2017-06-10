@@ -1,9 +1,0 @@
-#!/bin/bash
-
-set -e # exit on first failure
-
-pushd ui/assets
-
-go-bindata -pkg assets .
-
-popd

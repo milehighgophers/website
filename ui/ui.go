@@ -7,6 +7,8 @@ import (
 	"github.com/milehighgophers/website/data"
 )
 
+//go:generate go-bindata -pkg ui assets
+
 var indexTemplate = template.Must(
 	template.ParseFiles(
 		"ui/templates/index.html",
