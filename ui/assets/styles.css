@@ -1,14 +1,26 @@
 body {
     font-family: monospace;
-    width: 1024px;
-    margin: 0 auto;
+}
+
+.header {
+    background: url(/assets/hero.jpg);
+    background-size: cover;
+    background-position: 50% 80%;
+    background-repeat: no-repeat;
+    height: 400px;
+    width: 100vw;
 }
 
 .logo {
     width: 200px;
-    position: absolute;
-    margin-left: 412px;
-    margin-top: 100px;
+    display: block;
+    padding-top: 100px;
+    margin: auto;
+}
+
+.body {
+    width: 1024px;
+    margin: auto;
 }
 
 .flex-container { display: flex; }
