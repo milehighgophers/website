@@ -120,18 +120,22 @@ func nextThree(events []Event) []Event {
 	return events[0:3]
 }
 
-func events(name string) ([]Event, error) {
+func events(name string) (data []Event, err error) {
 	resp, err := http.Get(fmt.Sprintf(apiTemplate, name))
+
 	if err != nil {
-		log.Fatal(err)
+		return data, err
 	}
+
 	defer resp.Body.Close()
 
 	decoder := json.NewDecoder(resp.Body)
-	var data []Event
+
 	err = decoder.Decode(&data)
+
 	if err != nil {
-		return nil, err
+		return data, err
 	}
-	return data, nil
+
+	return data, err
 }
