@@ -11,18 +11,23 @@
 			<img src="/assets/logo.png" alt="mile-high-gophers-logo" class="logo">
 		</header>
 		<section class="body flex-container">
-			<div class="flex-1">
-				<h1>Boulder</h1>
-                {{template "events" .BoulderEvents}}
-			</div>
-			<div class="flex-1">
-				<h1>Denver</h1>
-                {{template "events" .DenverEvents}}
-			</div>
-			<div class="flex-1">
-				<h1>Denver Tech Center</h1>
-                {{template "events" .DTCEvents}}
-			</div>
+			{{range .}}
+				<div class="flex-1">
+					<h1>{{.Label}}</h1>
+					<ul>
+						{{range .Next 3}}
+							<li>
+								<dl>
+									<dt>{{.HumanTime}}</dt>
+									<dd>{{.Name}}</dd>
+								</dl>
+							</li>
+						{{else}}
+							<div><strong>No Events</strong></div>
+						{{end}}
+					</ul>
+				</div>
+			{{end}}
 		</section>
 	</body>
 </html>
