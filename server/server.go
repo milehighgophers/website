@@ -8,11 +8,11 @@ import (
 	"github.com/milehighgophers/website/ui"
 )
 
-type Store interface {
-	AllEvents() *data.MeetupSchedule
-}
+// type Store interface {
+// 	AllEvents() *data.MeetupSchedule
+// }
 
-func Start(addr string, s Store) error {
+func Start(addr string, s *data.Store) error {
 	log.Printf("listening on %s", addr)
 
 	mux := http.NewServeMux()
@@ -22,17 +22,18 @@ func Start(addr string, s Store) error {
 }
 
 type IndexHandler struct {
-	store Store
+	store data.Store
 }
 
-func NewIndexHandler(s Store) *IndexHandler {
+func NewIndexHandler(s *data.Store) *IndexHandler {
 	return &IndexHandler{
-		store: s,
+		store: *s,
 	}
 }
 
 func (h *IndexHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	html := ui.Render(h.store.AllEvents())
+	html := ui.Render(h.store.Schedules)
+
 	_, err := rw.Write(html)
 	if err != nil {
 		log.Print("error occured with /:", err)
